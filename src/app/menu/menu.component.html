@@ -1,0 +1,7 @@
+<ul>
+  <li>menus:</li>
+  <li *ngFor="let menu of menuService.getMenuList()">
+    
+    <a routerLink="{{menu.url}}" routerLinkActive="active">{{menu.name}}</a>
+  </li>
+</ul>

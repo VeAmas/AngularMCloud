@@ -1,0 +1,11 @@
+{
+  "/api/*": {
+    "target": "http://172.16.5.221:8080/",
+    "changeOrigin": true,
+    "pathRewrite":{
+     "^/api": ""
+    },
+    "secure": false,
+    "logLevel": "debug"
+  }
+}
