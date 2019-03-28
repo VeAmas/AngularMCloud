@@ -1,7 +1,14 @@
-<ul>
-  <li>menus:</li>
-  <li *ngFor="let menu of menuService.getMenuList()">
-    
-    <a routerLink="{{menu.url}}" routerLinkActive="active">{{menu.name}}</a>
+<ul nz-menu [nzMode]="'inline'" class="menu-bar" style="width: 240px;">
+
+  <li nz-menu-item
+    nz-tooltip 
+    nzPlacement="right" 
+    [nzTitle]="''" 
+    [nzSelected]="menu.url === router.url"
+    *ngFor="let menu of menuService.getMenuList()"
+    routerLink="{{menu.url}}"  routerLinkActive="active">
+    <span title> <a>{{menu.name}}</a></span>
   </li>
+
 </ul>
+

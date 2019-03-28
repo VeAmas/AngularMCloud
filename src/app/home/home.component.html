@@ -1,6 +1,10 @@
-<p>
-  home works!
-</p>
-<app-menu></app-menu>
-<button (click)="logout()">Logout</button>
-<router-outlet></router-outlet>
+<div class="home-wrapper">
+  <app-menu></app-menu>
+
+  <div class="top-bar">
+    <button nz-button nzType="primary" nzSize="small" nzShape="round" (click)="backToDvs()" *ngIf="menuService.type === 'company'">switch</button>
+    <button class="logout" nz-button nzType="primary" nzSize="small" nzShape="round" (click)="logout()">Logout</button>
+  </div>
+
+  <router-outlet></router-outlet>
+</div>

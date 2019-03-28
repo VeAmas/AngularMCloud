@@ -1,6 +1,6 @@
 {
   "/api/*": {
-    "target": "http://172.16.5.221:8080/",
+    "target": "http://172.16.5.225:8080/",
     "changeOrigin": true,
     "pathRewrite":{
      "^/api": ""

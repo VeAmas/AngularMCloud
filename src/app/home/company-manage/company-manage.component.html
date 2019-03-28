@@ -1,3 +1,195 @@
-<p>
-  company-manage works!
-</p>
+<section id="dvs-company-manage-page">
+  <div class="left">
+    <div class="header">
+      <div>
+        <div class="title">
+          Company List
+        </div>
+          
+        <nz-input-group nzSearch class="search-bar" [nzAddOnAfter]="suffixIconButton">
+          <input type="text" nz-input placeholder="input search text" [(ngModel)]="param.searchName"/>
+        </nz-input-group>
+        <ng-template #suffixIconButton>
+          <button nz-button nzType="primary" nzSearch (click)="getData()" [nzLoading]="companyListLoading">search</button>
+        </ng-template>
+      </div>
+
+
+
+      <div>
+        <button nz-button nzSize="default" nzType="primary" (click)="addCompany.toModal()">Add Company</button>
+      </div>
+
+    </div>
+
+    <nz-table #basicTable
+      [nzShowPagination] = "false"
+      [nzLoading] = "companyListLoading"
+      [nzData]="companyList">
+      <thead>
+        <tr>
+          <th>Company Name</th>
+          <th>Contact</th>
+          <th>Telephone</th>
+          <th>Email</th>
+          <th>Location</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let company of basicTable.data">
+          <td><a (click)="enterCompany(company)">{{company.name}}</a></td>
+          <td>{{company.contact}}</td>
+          <td>{{company.telephone}}</td>
+          <td>{{company.email}}</td>
+          <td>{{company.location}}</td>
+        </tr>
+      </tbody>
+    </nz-table>
+    <nz-pagination style="text-align: right;"
+      [nzShowTotal] = "totalTemplate"
+      [nzPageIndex]="pagination.currentPage" 
+      [nzTotal]="pagination.total" nzShowSizeChanger 
+      [nzPageSize]="pagination.pageSize" 
+      (nzPageIndexChange) = "getData()"
+      (nzPageSizeChange) = "getData()" ></nz-pagination>
+      <ng-template #totalTemplate let-total> 共 {{ pagination.total }} 条 </ng-template>
+  </div>
+  <div class="right">
+    
+  </div>
+
+  <nz-modal [(nzVisible)]="addCompany.show" nzTitle="The first Modal" [nzFooter]="modalFooter" (nzOnCancel)="addCompany.clear()" [nzMaskClosable]="false">
+
+    <form nz-form [formGroup]="addCompany.form" (ngSubmit)="addCompany.execute()">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired>CompanyName</nz-form-label>
+        <nz-form-control [nzSm]="12" [nzXs]="24" nzHasFeedback>
+          <nz-input-group [nzAddOnAfter]="companyNameLength">
+            <input nz-input formControlName="name" placeholder="try 'kongtrolink'" (input)="addCompany.onCompanyNameChange()" />
+          </nz-input-group>
+          <ng-template #companyNameLength>
+            <span style="margin-right: 14px;">{{ addCompany.companyNameLength + ' / 50' }}</span>
+          </ng-template>
+
+          <nz-form-explain
+            *ngIf="
+              (addCompany.form.get('name')?.dirty && addCompany.form.get('name')?.errors) ||
+              addCompany.form.get('name')?.pending
+            "
+          >
+            <ng-container *ngIf="addCompany.form.get('name')?.hasError('required')">
+              Please input CompanyName
+            </ng-container>
+            <ng-container *ngIf="addCompany.form.get('name')?.hasError('duplicated')">
+              companyName {{addCompany.form.value.name}} is duplicated
+            </ng-container>
+            <ng-container *ngIf="addCompany.form.get('name')?.hasError('typeError')">
+              Invalid companyName
+            </ng-container>
+            <ng-container *ngIf="addCompany.form.get('name')?.hasError('lengthExceeded')">
+              companyName is too long
+            </ng-container>
+            <ng-container *ngIf="addCompany.form.get('name')?.pending">
+              Validating...
+            </ng-container>
+          </nz-form-explain>
+
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired>Contact</nz-form-label>
+        <nz-form-control [nzSm]="12" [nzXs]="24" nzHasFeedback>
+          <input nz-input formControlName="contact" placeholder="" />  
+          <nz-form-explain *ngIf="addCompany.form.get('contact')?.dirty && addCompany.form.get('contact')?.errors">
+            <ng-container *ngIf="addCompany.form.get('contact')?.hasError('required')">
+              Please input Contact
+            </ng-container>
+          </nz-form-explain>  
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired>Telephone</nz-form-label>
+        <nz-form-control [nzSm]="12" [nzXs]="24" nzHasFeedback>
+          <input nz-input formControlName="telephone" placeholder="" />  
+          <nz-form-explain *ngIf="addCompany.form.get('telephone')?.dirty && addCompany.form.get('telephone')?.errors">
+            <ng-container *ngIf="addCompany.form.get('telephone')?.hasError('required')">
+              Please input Telephone
+            </ng-container>
+            <ng-container *ngIf="addCompany.form.get('telephone')?.hasError('typeError')">
+              Invalid Telephone
+            </ng-container>
+          </nz-form-explain>  
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired>Email</nz-form-label>
+        <nz-form-control [nzSm]="12" [nzXs]="24" nzHasFeedback>
+          <input nz-input formControlName="email" placeholder="" />  
+          <nz-form-explain *ngIf="addCompany.form.get('email')?.dirty && addCompany.form.get('email')?.errors">
+            <ng-container *ngIf="addCompany.form.get('email')?.hasError('required')">
+              Please input Email
+            </ng-container>
+            <ng-container *ngIf="addCompany.form.get('email')?.hasError('typeError')">
+              Invalid Email
+            </ng-container>
+          </nz-form-explain>  
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired>Location</nz-form-label>
+        <nz-form-control [nzSm]="12" [nzXs]="24" nzHasFeedback>
+          <input nz-input formControlName="location" placeholder="" />  
+          <nz-form-explain *ngIf="addCompany.form.get('location')?.dirty && addCompany.form.get('location')?.errors">
+            <ng-container *ngIf="addCompany.form.get('location')?.hasError('required')">
+              Please input Location
+            </ng-container>
+          </nz-form-explain>  
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired>Coordinates</nz-form-label>
+          <div nz-row [nzGutter]="12">
+            <nz-form-control nz-col class="gutter-row-no-padding" [nzSpan] = "6" nzHasFeedback>
+              <input nz-input formControlName="longitude" placeholder="" />  
+              <nz-form-explain *ngIf="addCompany.form.get('longitude')?.dirty && addCompany.form.get('longitude')?.errors">
+                <ng-container *ngIf="addCompany.form.get('longitude')?.hasError('required')">
+                  Please input Longitude
+                </ng-container>
+                <ng-container *ngIf="addCompany.form.get('longitude')?.hasError('typeError')">
+                  Invalid Longitude
+                </ng-container>
+              </nz-form-explain>  
+            </nz-form-control>
+            <nz-form-control nz-col [nzSpan] = "6" nzHasFeedback>
+              <input nz-input formControlName="latitude" placeholder="" />  
+              <nz-form-explain *ngIf="addCompany.form.get('latitude')?.dirty && addCompany.form.get('latitude')?.errors">
+                <ng-container *ngIf="addCompany.form.get('latitude')?.hasError('required')">
+                  Please input Latitude
+                </ng-container>
+                <ng-container *ngIf="addCompany.form.get('latitude')?.hasError('typeError')">
+                  Invalid Latitude
+                </ng-container>
+              </nz-form-explain>  
+            </nz-form-control>
+        </div>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired>Receive Alarm Message</nz-form-label>
+        <nz-form-control [nzSm]="12" [nzXs]="24">
+          <nz-switch formControlName="receiveAlarmMessage" nzCheckedChildren="ON" nzUnCheckedChildren="OFF"></nz-switch>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired>Receive Alarm Email</nz-form-label>
+        <nz-form-control [nzSm]="12" [nzXs]="24">
+          <nz-switch formControlName="receiveAlarmEmail" nzCheckedChildren="ON" nzUnCheckedChildren="OFF"></nz-switch>
+        </nz-form-control>
+      </nz-form-item>
+
+    </form>
+    <ng-template #modalFooter>
+      <button nz-button nzType="default" (click)="addCompany.clear()">Cancle</button>
+      <button nz-button nzType="primary" [disabled]="!addCompany.form.valid" (click)="addCompany.execute()" [nzLoading]="false">OK</button>
+    </ng-template>
+  </nz-modal>
+</section>
